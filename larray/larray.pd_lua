@@ -1,11 +1,18 @@
+local DEBUG = true
 local larr = pd.Class:new():register("larray")
 local inspect = require('inspect')
 
-function larr:initialize(sel, atoms)
+function larr:initialize()
     self.reg = require('myregistry')
-    --self.inspect = require('inspect')
-    self.lex = dofile('/home/neum/Documents/pdlua_externals/larray/larray.lua')
-    self.counter = 1
+    if DEBUG then
+        self.lex = dofile('/home/neum/Documents/pdlua_externals/larray/larray.lua')
+        self.Larray = dofile('/home/neum/Documents/pdlua_externals/larray/Larray.lua')
+        --self.registry = dofile('/home/neum/Documents/pdlua_externals/larray/myregistry.so')
+    else
+        self.lex = require('larray')
+        self.Larray = require('Larray')
+    end
+
     self.inlets = 1
     self.outlets = 2
 
@@ -14,24 +21,15 @@ end
 
 
 function larr:in_1(sel, atoms)
-    --[[
-    local s = ""
-    if sel ~= 'list' then s = tostring(sel) end
-
-    for _,v in ipairs(atoms) do s = s .. " " .. tostring(v) end
-
-    self.lex.reset(s)
-
-    local t = nil
-    local tab = {}
-
-    repeat
-        t = self.lex.next()
-        if t then table.insert(tab, t) end
-    until not t 
-    ]]--
-
-    local parsed = self.lex.process(sel, atoms)
-    pd.post(inspect(parsed))
-
+    local parsed = self.lex.process(sel, atoms, pd.post)
+    local larr = self.Larray:new(parsed)
+    
+    pd.post(inspect(larr.seq))
 end
+
+-- get lua table pointer
+--[[
+function larr:in_1_table(ref)
+    local retrieved = self.registry.retrieve(ref)
+end
+]]--
