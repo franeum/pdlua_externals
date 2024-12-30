@@ -1,5 +1,5 @@
 local DEBUG = true
-local larr = pd.Class:new():register("larray")
+local larr = pd.Class:new():register("larray.lookup")
 local inspect = require('inspect')
 
 function larr:initialize()
@@ -14,29 +14,27 @@ function larr:initialize()
 
     self.registry = require('myregistry')
 
-    self.input_tab = nil
-
-    self.inlets = 1
+    self.inlets = 2
     self.outlets = 2
 
     return true
 end
 
 
-function larr:in_1(sel, atoms)
+function larr:in_2(sel, atoms)
     local parsed = self.lex.process(sel, atoms, pd.post)
-    local larr = self.Larray:new(parsed)
+    self.larr = self.Larray:new(parsed)
     
-    pd.post(inspect(larr.seq))
+    pd.post(inspect(self.larr.seq))
+end
+
+
+function larr:in_1_float(f)
+    pd.post(inspect(self.larr.seq[f]))
 end
 
 
 -- get lua table pointer
 function larr:in_1_table(ref)
-    self.input_tab = self.registry.retrieve(ref)
-end
-
-
-function larr:output_ref()
-    self:outlet(1, 'ltable')
+    local retrieved = self.registry.retrieve(ref)
 end

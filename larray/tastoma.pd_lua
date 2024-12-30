@@ -1,8 +1,8 @@
 local DEBUG = true
-local larr = pd.Class:new():register("larray")
+local larr = pd.Class:new():register("tastoma")
 local inspect = require('inspect')
 
-function larr:initialize()
+function larr:initialize(sel, atoms)
     self.reg = require('myregistry')
     if DEBUG then
         self.lex = dofile('/home/neum/Documents/pdlua_externals/larray/larray.lua')
@@ -17,7 +17,10 @@ function larr:initialize()
     self.input_tab = nil
 
     self.inlets = 1
-    self.outlets = 2
+
+    self.outlets = atoms[1]
+
+    --for i, v in ipairs(atoms) do pd.post(i, v) end
 
     return true
 end

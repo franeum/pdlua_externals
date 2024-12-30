@@ -1,6 +1,8 @@
 local Larray = {}
 Larray.__index = Larray
 
+local inspect = require('inspect')
+
 function Larray:new(seq)
     local mt = {}
     if seq then mt.seq = seq end
@@ -53,6 +55,14 @@ function Larray:iterate_table(t, parent_indices)
             print(table.concat(current_indices, " "), v)
         end
     end
+end
+
+
+function Larray:tostr()
+    local str = inspect(self.seq)
+    str = str:gsub('{','[')
+    str = str:gsub('}',']')
+    return str
 end
 
 

@@ -1,0 +1,4 @@
+#N canvas 1046 394 450 300 12;
+#X declare -lib pdlua;
+#X obj 97 58 declare -lib pdlua;
+#X obj 109 166 tastoma 10, f 32;
