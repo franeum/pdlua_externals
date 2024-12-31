@@ -6,10 +6,10 @@ function larr:initialize()
     self.reg = require('myregistry')
     if DEBUG then
         self.lex = dofile('/home/neum/Documents/pdlua_externals/larray/larray.lua')
-        self.Larray = dofile('/home/neum/Documents/pdlua_externals/larray/Larray.lua')
+        self.Larray = dofile('/home/neum/Documents/pdlua_externals/larray/Ltable.lua')
     else
         self.lex = require('larray')
-        self.Larray = require('Larray')
+        self.Larray = require('Ltable')
     end
 
     self.registry = require('myregistry')

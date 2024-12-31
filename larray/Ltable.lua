@@ -1,32 +1,40 @@
-local Larray = {}
-Larray.__index = Larray
+local Ltable = {}
+Ltable.__index = Ltable
 
 local inspect = require('inspect')
 
-function Larray:new(seq)
+function Ltable:new(seq, depth)
     local mt = {}
-    if seq then mt.seq = seq end
+    setmetatable(mt, {
+        __call = function (cls, ...)
+            return cls.new(...)
+        end
+    })
+    --if seq then mt.seq = seq end
     --if depth then mt.depth = depth end
-    setmetatable(mt, self)
+    mt.seq = seq or {}
+    mt.depth = depth or 1 
     return mt
 end
 
---[[
-function Larray:set_depth(d)
+
+function Ltable:set_depth(d)
     self.depth = tonumber(d)
 end
 
-function Larray:get_depth()
+
+function Ltable:get_depth()
     return self.depth
 end
-]]--
 
-function Larray:__tostring()
+
+function Ltable:__tostring()
     local inspect = require("inspect")
     return inspect(self.seq)
 end
 
-function Larray:flat_iterate(s, idx)
+
+function Ltable:flat_iterate(s, idx)
     local _idx
 
     if not idx then
@@ -43,7 +51,7 @@ function Larray:flat_iterate(s, idx)
 end
 
 
-function Larray:iterate_table(t, parent_indices)
+function Ltable:iterate_table(t, parent_indices)
     parent_indices = parent_indices or {}
     for i, v in ipairs(t) do
         local current_indices = {table.unpack(parent_indices)}
@@ -58,7 +66,7 @@ function Larray:iterate_table(t, parent_indices)
 end
 
 
-function Larray:tostr()
+function Ltable:tostr()
     local str = inspect(self.seq)
     str = str:gsub('{','[')
     str = str:gsub('}',']')
@@ -66,4 +74,4 @@ function Larray:tostr()
 end
 
 
-return Larray
+return Ltable

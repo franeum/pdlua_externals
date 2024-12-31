@@ -51,7 +51,8 @@ local function parse(tokens, callback)
             end
         end
     end
-    return stack[1][1]
+    
+    return stack[1][1], depth
 end
 
 
@@ -59,9 +60,7 @@ local function stringify(sel, atoms)
     local s = ""
 
     if sel ~= 'list' then s = tostring(sel) end
-    
     for _,v in ipairs(atoms) do s = s .. " " .. tostring(v) end
-    
     return s
 end
 
@@ -83,8 +82,8 @@ end
 function larray.process(sel, atoms, callback)
     local s = stringify(sel, atoms)
     local lexed = lexify(s)
-    local parsed = parse(lexed, callback)
-    return parsed
+    local ltable, depth = parse(lexed, callback)
+    return ltable, depth
 end
 
 
