@@ -80,6 +80,7 @@ lua_State *L;  // Dichiarazione della variabile globale L, la quale rappresenta 
 int yylex(void);  // Dichiarazione della funzione yylex
 void yyerror(const char* msg);  // Dichiarazione della funzione yyerror
 int yy_scan_string(const char* str);  // Dichiarazione di yy_scan_string
+void yywrap();
 
 struct list {
     int size;
@@ -87,7 +88,7 @@ struct list {
 };
 
 
-#line 91 "parser.tab.c"
+#line 92 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -509,7 +510,7 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    35,    35
+       0,    36,    36
 };
 #endif
 
@@ -1066,7 +1067,7 @@ yyreduce:
   switch (yyn)
     {
 
-#line 1070 "parser.tab.c"
+#line 1071 "parser.tab.c"
 
       default: break;
     }
@@ -1259,7 +1260,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 57 "parser.y"
+#line 58 "parser.y"
 
 
 int main(void) {

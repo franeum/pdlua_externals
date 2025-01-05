@@ -6,16 +6,22 @@ local lexer = patok {OPENPAREN = '%['}
                     {SYMBOL = '%w+'}
                     {SEPARATOR = '%s+'}()
 
+
+
+-- reset string to parse
 local function reset(str)
     return lexer:reset(str)
 end
 
+
+-- iterate over string to parse
 local function next()
     return lexer:next()
 end
 
+
+-- parser
 local function parse(tokens, callback)
-    --local tokens = clean(t)
     local stack = { {} } -- Pila per gestire le tabelle annidate
     local current_table = stack[1] -- La tabella corrente
     local level = 0
@@ -51,11 +57,12 @@ local function parse(tokens, callback)
             end
         end
     end
-    
+
     return stack[1][1], depth
 end
 
 
+-- list to string
 local function stringify(sel, atoms)
     local s = ""
 
@@ -65,6 +72,7 @@ local function stringify(sel, atoms)
 end
 
 
+-- lexer
 local function lexify(s)
     reset(s)
 
@@ -79,6 +87,8 @@ local function lexify(s)
     return tab
 end
 
+
+-- apply lexer and parser
 function larray.process(sel, atoms, callback)
     local s = stringify(sel, atoms)
     local lexed = lexify(s)

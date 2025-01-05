@@ -10,8 +10,6 @@ function Ltable:new(seq, depth)
             return cls.new(...)
         end
     })
-    --if seq then mt.seq = seq end
-    --if depth then mt.depth = depth end
     mt.seq = seq or {}
     mt.depth = depth or 1 
     return mt
