@@ -1,5 +1,8 @@
 {
     "files.associations": {
         "parser.tab.h": "c"
-    }
+    },
+    "Lua.diagnostics.globals": [
+        "array"
+    ]
 }
