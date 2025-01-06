@@ -1,0 +1,8 @@
+#N canvas 1005 396 450 300 12;
+#X declare -lib pdlua;
+#X obj 99 58 declare -lib pdlua;
+#X obj 122 174 larray.map;
+#X obj 122 199 print;
+#X msg 122 134 [ 1 3 5 7 pippo 9];
+#X connect 1 0 2 0;
+#X connect 3 0 1 0;

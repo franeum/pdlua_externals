@@ -9,7 +9,7 @@ if not _GLOBALTABLE then
     _GLOBALTABLE = {}
 end
 
-local objectname = "larray.template"
+local objectname = "larray.print"
 local larray = pd.Class:new():register(objectname)
 
 
@@ -18,19 +18,22 @@ function larray:initialize(sel, atoms)
         package.path = package.path .. ";/home/neum/Documenti/pdlua_externals/larray/?.lua"
     end
 
-    local output = arg_parser.parse(atoms)['@output']
+    self.selector = atoms[1]
     self.token = pd_utils.get_token()
-    self.out = self:custom_output(output)
-
     self.inlets = 1
-    self.outlets = 1
 
     return true
 end
 
 
 function larray:in_1_float(f)
-    self:outlet(1, 'float', { f })
+    pd.post(f)
+end
+
+
+function larray:in_1_bang()
+    if not self.selector then self.selector = objectname end
+    pd.post(string.format("%s %s", self.selector, self.larr:tostr()))
 end
 
 
@@ -42,36 +45,17 @@ end
 function larray:in_1_ltable(ref)
     local t_larr = array.deep_copy(_GLOBALTABLE[ref[1]])
     self.larr = pd_utils.table_to_ltable(t_larr)
-    self.out()
+    self:in_1_bang()
 end
 
 
 function larray:in_1_larray(atoms)
     self.larr = pd_utils.larray_to_ltable(atoms, pd.post, objectname)
-    self.out()
+    self:in_1_bang()
 end
 
 
 function larray:in_1(sel, atoms)
-    pd.post(string.format("%s %s", sel, inspect(atoms)))
     local concatenated = array.concat({ sel }, atoms)
     self:in_1_larray(concatenated)
-end
-
-
-function larray:custom_output(func)
-    if func == 'token' or not func then
-        return function ()
-            _GLOBALTABLE[self.token] = self.larr.seq
-            self:outlet(1, 'ltable', { self.token })
-        end
-    elseif func == 'larray' then
-        return function ()
-            self:outlet(1, 'larray', pd_utils.ltable_to_larray(self.larr.seq))
-        end
-    elseif func == 'list' then
-        return function ()
-            self:outlet(1, 'list', pd_utils.larray_to_list(self.larr.seq))
-        end
-    end
 end

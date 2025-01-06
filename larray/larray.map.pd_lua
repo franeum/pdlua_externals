@@ -9,7 +9,7 @@ if not _GLOBALTABLE then
     _GLOBALTABLE = {}
 end
 
-local objectname = "larray.template"
+local objectname = "larray.map"
 local larray = pd.Class:new():register(objectname)
 
 
@@ -21,7 +21,7 @@ function larray:initialize(sel, atoms)
     local output = arg_parser.parse(atoms)['@output']
     self.token = pd_utils.get_token()
     self.out = self:custom_output(output)
-
+    
     self.inlets = 1
     self.outlets = 1
 
@@ -46,16 +46,17 @@ function larray:in_1_ltable(ref)
 end
 
 
-function larray:in_1_larray(atoms)
-    self.larr = pd_utils.larray_to_ltable(atoms, pd.post, objectname)
-    self.out()
-end
-
-
 function larray:in_1(sel, atoms)
-    pd.post(string.format("%s %s", sel, inspect(atoms)))
-    local concatenated = array.concat({ sel }, atoms)
-    self:in_1_larray(concatenated)
+    --pd.post(inspect(atoms))
+    self.larr = pd_utils.larray_to_ltable(sel, atoms, pd.post, objectname)
+    
+    for _,v in ipairs(self.larr.seq) do
+        if type(v) == 'number' then
+            self:outlet(1, 'float', { v })
+        elseif type(v) == 'string' then
+            self:outlet(1, 'symbol', { v })
+        end
+    end
 end
 
 
@@ -67,7 +68,7 @@ function larray:custom_output(func)
         end
     elseif func == 'larray' then
         return function ()
-            self:outlet(1, 'larray', pd_utils.ltable_to_larray(self.larr.seq))
+            self:outlet(1, "", pd_utils.ltable_to_larray(self.larr.seq))
         end
     elseif func == 'list' then
         return function ()

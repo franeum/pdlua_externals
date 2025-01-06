@@ -11,8 +11,8 @@ utils.ltable = require('ltable')
 utils.larray_parser = require('larray_parser')
 
 
-function utils.larray_to_ltable(sel, atoms, post_callback)
-    local larray = utils.parser.parse(sel, atoms, post_callback)
+function utils.larray_to_ltable(atoms, post_callback, o_name)
+    local larray = utils.parser.parse(atoms, post_callback, o_name)
     local ltable = utils.ltable(larray)
     return ltable
 end
@@ -34,13 +34,6 @@ function utils.larray_to_list(_tab)
     -- TODO
 end
 
-
---[[
-function utils.parse_args(_atoms)
-    local _pairs = utils.arg_parser.parse(_atoms)
-    local output = _pairs['@output']
-end
-]]--
 
 function utils.get_token()
     local r_string = ""
@@ -69,7 +62,7 @@ function utils.custom_output(obj, func, _tab, _token)
         end
     elseif func == 'larray' then
         return function ()
-            obj:outlet(1, "", utils.ltable_to_larray(_tab.seq))
+            obj:outlet(1, nil, utils.ltable_to_larray(_tab.seq))
         end
     elseif func == 'list' then
         return function ()

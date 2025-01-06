@@ -6,7 +6,7 @@ local lexer = patok {OPENPAREN = '%['}
                     {SYMBOL = '%w+'}
                     {SEPARATOR = '%s+'}()
 
-
+local DEBUG = false
 
 -- reset string to parse
 local function reset(str)
@@ -21,17 +21,19 @@ end
 
 
 -- parser
-local function execute_parse(tokens, callback)
+local function execute_parse(tokens, callback, obj_name)
     local stack = { {} } -- Pila per gestire le tabelle annidate
     local current_table = stack[1] -- La tabella corrente
     local level = 0
     --local depth = 0
 
     for idx, token in ipairs(tokens) do
+        if DEBUG then pd.post(string.format("%s === %s: %s", obj_name, token.type, token.value)) end
+        --[[
         if idx == 1 and token.type ~= 'OPENPAREN' then 
-            callback("MALFORMED LARRAY (missing starting bracket)")
+            callback(string.format("%s: MALFORMED LARRAY (missing starting bracket)", obj_name))
             return nil
-        end
+        end]]--
         if token.type == "OPENPAREN" then
             -- Aggiungere una nuova tabella al livello corrente
             level = level + 1
@@ -44,7 +46,7 @@ local function execute_parse(tokens, callback)
             -- Tornare al livello precedente
             level = level - 1
             if level == 0 and idx ~= #tokens then 
-                callback("MALFORMED LARRAY (missing 0-level brackets)")
+                callback(string.format("%s: MALFORMED LARRAY (missing 0-level brackets)", obj_name))
                 return nil
             end
             table.remove(stack)
@@ -63,12 +65,23 @@ end
 
 
 -- list to string
-local function stringify(sel, atoms)
+local function stringify(atoms)
+    --[[
     local s = ""
 
     if sel ~= 'list' then s = tostring(sel) end
     for _,v in ipairs(atoms) do s = s .. " " .. tostring(v) end
+    return s]]--
+    local s = ''
+    for i, v in ipairs(atoms) do
+        if i == 1 then 
+            s = tostring(v) 
+        else
+            s = s .. " " .. tostring(v)
+        end
+    end
     return s
+
 end
 
 
@@ -89,10 +102,11 @@ end
 
 
 -- apply lexer and parser
-function larray.parse(sel, atoms, callback)
-    local s = stringify(sel, atoms)
+function larray.parse(atoms, callback, object_name)
+    --local inspect = require("inspect")
+    local s = stringify(atoms)
     local lexed = lexify(s)
-    local ltable = execute_parse(lexed, callback)
+    local ltable = execute_parse(lexed, callback, object_name)
     return ltable
 end
 
