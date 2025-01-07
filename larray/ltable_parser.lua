@@ -6,7 +6,7 @@ local lexer = patok {OPENPAREN = '%['}
                     {SYMBOL = '%w+'}
                     {SEPARATOR = '%s+'}()
 
-local DEBUG = false
+local DEBUG = true
 
 -- reset string to parse
 local function reset(str)
